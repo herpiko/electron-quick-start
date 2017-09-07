@@ -11,16 +11,32 @@ const url = require('url')
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow
 
+let Client = require('node-rest-client').Client;
+ 
+let client = new Client();
+ 
+// set content-type header and data as json in args parameter 
+let args = {
+    headers: { "Content-Type": "application/json", "Authorization" : "CTyJOiG2iZIY0nHN1Wp143yIsXMtx7hF4wVeO4z2M3glwe9emhaEoHtE8OCOkJ4R", "ThirdPartyName" : "thirdpartyB" }
+
+};
+
 function createWindow () {
   // Create the browser window.
   mainWindow = new BrowserWindow({width: 800, height: 600})
 
-  // and load the index.html of the app.
-  mainWindow.loadURL(url.format({
-    pathname: path.join(__dirname, 'index.html'),
-    protocol: 'file:',
-    slashes: true
-  }))
+  client.get("https://dog.ceo/api/breeds/list/all", args, function (data, response) {
+      // parsed response body as js object 
+      console.log(data);
+      // and load the index.html of the app.
+      mainWindow.data = data;
+      mainWindow.loadURL(url.format({
+        pathname: path.join(__dirname, 'index.html'),
+        protocol: 'file:',
+        slashes: true,
+      }))
+  });
+
 
   // Open the DevTools.
   // mainWindow.webContents.openDevTools()
@@ -58,3 +74,4 @@ app.on('activate', function () {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
+
